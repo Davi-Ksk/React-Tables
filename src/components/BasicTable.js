@@ -13,6 +13,7 @@ export const BasicTable = () => {
     getTableProps, 
     getTableBodyProps, 
     headerGroups, //array of header groups. Every colomn header belongs to a group. See line 33
+    footerGroups,
     rows, 
     prepareRow,
 
@@ -46,7 +47,7 @@ export const BasicTable = () => {
             return (
               <tr {...row.getRowProps()}>
                 {
-                  row.cells.map(cell => { //On each row we acess the cells
+                  row.cells.map(cell => { //Acess the cells on each row
                     return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>  //With each cell, its called the render function passing in the string 'Cell'
                     //For each column, render the cell property naming the reader for that column
                   })
@@ -56,6 +57,19 @@ export const BasicTable = () => {
           })
         }
       </tbody>
+      <tfoot>
+        {
+          footerGroups.map(footerGroup => (
+            <tr {...footerGroup.getFooterGroupProps()}>
+              {
+                footerGroup.headers.map(column => (
+                  <td {...column.getFooterProps()}>{column.render('Footer')}</td>
+                ))
+              }
+            </tr>
+          ))
+        }
+      </tfoot>
     </table>
   )
 }
