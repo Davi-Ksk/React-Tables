@@ -1,12 +1,12 @@
 import React, { useMemo } from "react";
 import { useTable } from "react-table";
 import MOCK_DATA from "./MOCK_DATA.json";
-import { COLUMNS } from "./columns";
+import { COLUMNS, GROUPED_COLUNMS } from "./columns";
 import  "./tables.css";
 
 export const BasicTable = () => {
   
-  const columns = useMemo(() => COLUMNS, []);
+  const columns = useMemo(() => COLUNMS, []);
   const data = useMemo(() => MOCK_DATA, []); //Assure that the data is not changed by the useMemo hook. If it wasn't, the data will be re-rendered every time.
 
   const { 
