@@ -1,20 +1,14 @@
 import React, { useMemo } from "react";
-import { useTable } from "react-table";
+import { useTable, useGlobalFilter,  useFilters } from "react-table";
 import MOCK_DATA from "./MOCK_DATA.json";
 import { COLUMNS, GROUPED_COLUNMS } from "./columns";
 import  "./tables.css";
-import { ColumnFilter } from "./ColumnFilter";
+import { GlobalFilter } from "./GlobalFilter";
 
-export const BasicTable = () => {
+export const FilteringTable  = () => {
   
   const columns = useMemo(() => COLUMNS, []);
   const data = useMemo(() => MOCK_DATA, []); //Assure that the data is not changed by the useMemo hook. If it wasn't, the data will be re-rendered every time.
-
-  const defaultColumn = useMemo(() => {
-    return {
-      Filter: ColumnFilter
-    }
-  }, [])
 
   const { 
     getTableProps, 
@@ -23,15 +17,23 @@ export const BasicTable = () => {
     footerGroups,
     rows, 
     prepareRow,
+    state,
+    setGlobalFilter,
 
   } = useTable({
 
     columns,
-    data, //ES6 shorthand syntax for "columns: columns, data: data"
-    defaultColumn
-  })
+    data //ES6 shorthand syntax for "columns: columns, data: data"
+  
+  },
+  useFilters, //This hook is used to filter the table. It is used to filter the table by column. 
+  useGlobalFilter) //This hook is used to filter the table. It is used to filter the table by global filter. 
+
+  const { globalFilter } = state
 
   return (
+    <>
+    <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
     <table {...getTableProps()}>
       <thead>
         {
@@ -39,7 +41,9 @@ export const BasicTable = () => {
           <tr {...headerGroup.getHeaderGroupProps()}>
             {
               headerGroup.headers.map(column => (
-                <th {...column.getHeaderProps()}>{column.render('Header')}</th> //For each column in the header group, render the header property. It corresponds to the columns array in the json
+                <th {...column.getHeaderProps()}>{column.render('Header')}
+                  <div>{column.canFilter ? column.render('Filter') : null}</div>
+                </th> //For each column in the header group, render the header property. It corresponds to the columns array in the json
               ))
             }
           </tr>
@@ -78,5 +82,6 @@ export const BasicTable = () => {
         }
       </tfoot>
     </table>
+    </>
   )
 }

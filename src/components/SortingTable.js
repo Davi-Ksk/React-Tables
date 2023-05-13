@@ -1,20 +1,13 @@
 import React, { useMemo } from "react";
-import { useTable } from "react-table";
+import { useTable, useSortBy } from "react-table";
 import MOCK_DATA from "./MOCK_DATA.json";
 import { COLUMNS, GROUPED_COLUNMS } from "./columns";
 import  "./tables.css";
-import { ColumnFilter } from "./ColumnFilter";
 
-export const BasicTable = () => {
+export const SortingTable = () => {
   
   const columns = useMemo(() => COLUMNS, []);
   const data = useMemo(() => MOCK_DATA, []); //Assure that the data is not changed by the useMemo hook. If it wasn't, the data will be re-rendered every time.
-
-  const defaultColumn = useMemo(() => {
-    return {
-      Filter: ColumnFilter
-    }
-  }, [])
 
   const { 
     getTableProps, 
@@ -27,9 +20,10 @@ export const BasicTable = () => {
   } = useTable({
 
     columns,
-    data, //ES6 shorthand syntax for "columns: columns, data: data"
-    defaultColumn
-  })
+    data //ES6 shorthand syntax for "columns: columns, data: data"
+  
+  },
+  useSortBy)
 
   return (
     <table {...getTableProps()}>
@@ -39,7 +33,12 @@ export const BasicTable = () => {
           <tr {...headerGroup.getHeaderGroupProps()}>
             {
               headerGroup.headers.map(column => (
-                <th {...column.getHeaderProps()}>{column.render('Header')}</th> //For each column in the header group, render the header property. It corresponds to the columns array in the json
+                <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                  {column.render('Header')}
+                  <span>
+                    {column.isSorted ? (column.isSortedDesc ? '🔽' : '🔼') : ''}
+                  </span>
+                </th> //For each column in the header group, render the header property. It corresponds to the columns array in the json
               ))
             }
           </tr>
